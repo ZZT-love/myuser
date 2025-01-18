@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"> <!-- 设置字符集为UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置视口以适应设备宽度 -->
+    <title>潼的图书馆</title> <!-- 网页标题 -->
+    <link rel="stylesheet" href="https://static.fontawesome.com/css/fontawesome-app.css"> <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="font/iconfont.css"> <!-- 引入自定义字体图标样式 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400&display=swap">
+    <!-- 引入Google字体 -->
+     
+    <style>
+        * {
+            padding: 0;
+            /* 去掉所有元素的默认内边距 */
+            margin: 0;
+            /* 去掉所有元素的默认外边距 */
+            font-family: "Source Sans Pro", sans-serif;
+            /* 设置全局字体为Source Sans Pro */
+        }
+
+        /* 设置html和body元素为flex布局，中心对齐，并设置背景图样式 */
+        html,
+        body {
+            display: flex;
+            /* 使用flexbox布局 */
+            justify-content: center;
+            /* 水平方向居中对齐 */
+            align-items: center;
+            /* 垂直方向居中对齐 */
+            height: 100vh;
+            /* 高度占满整个视口 */
+            background-size: cover;
+            /* 背景图像覆盖整个区域 */
+            overflow: hidden;
+            /* 隐藏溢出的内容 */
+            transition: background-image .7s ease-in-out;
+            /* 背景图的变化过渡效果 */
+            background-color: #ffffff3d;
+            /* 背景颜色 */
+        }
+
+        /* 设置.shell元素的样式 */
+        .shell {
+            position: relative;
+            /* 相对定位以便绝对定位的子元素 */
+            display: flex;
+            /* 使用flex布局 */
+            justify-content: center;
+            /* 水平方向居中对齐 */
+            align-items: center;
+            /* 垂直方向居中对齐 */
+            width: 100%;
+            /* 宽度为100% */
+            height: 100%;
+            /* 高度为100% */
+            box-sizing: border-box;
+            /* 包括内边距和边框在内的计算宽高 */
+            background: rgba(99, 99, 99, 0.8);
+            /* 背景颜色为半透明灰色 */
+        }
+
+        /* 设置按钮的样式 */
+        .button {
+            display: flex;
+            /* 使用flex布局 */
+            justify-content: space-between;
+            /* 按钮之间均匀分布 */
+            align-items: center;
+            /* 垂直方向居中对齐 */
+            width: 380px;
+            /* 按钮区域的固定宽度 */
+            position: absolute;
+            /* 绝对定位控制按钮位置 */
+            left: 50%;
+            /* 左偏移50%以放置于中央 */
+            transform: translateX(-50%);
+            /* 通过转换实现真正的水平居中 */
+            bottom: -80px;
+            /* 向底部偏移80px */
+        }
+
+        /* 设置.prev和.next元素的样式 */
+        .prev,
+        .next {
+            transition: transform 0.25s ease;
+            /* 添加转换效果 */
+            z-index: 99999;
+            /* 设定层级为最大 */
+            bottom: 5px;
+            /* 向底部偏移5px */
+        }
+
+        /* 设置.prev和.next元素中的图标的样式 */
+        .prev i,
+        .next i {
+            font-size: 90px;
+            /* 图标字体大小 */
+            color: #fff;
+            /* 图标颜色为白色 */
+            cursor: pointer;
+            /* 设置鼠标悬停时为手形光标 */
+            text-shadow: 0 0 10px #ffffff;
+            /* 白色文字阴影 */
+        }
+
+        /* 设置.shell_body元素的样式 */
+        .shell_body {
+            width: 100%;
+            /* 宽度为100% */
+            transform: scale(.8);
+            /* 缩放为80% */
+            padding: 20px 0 150px 0;
+            /* 上内边距20px，下内边距150px */
+        }
+
+        /* 设置.shell_slider元素的样式 */
+        .shell_slider {
+            position: relative;
+            /* 相对定位 */
+            transition: transform 1s ease-in-out;
+            /* 设置转换效果 */
+            background: transparent;
+            /* 背景透明 */
+            animation: fadeInUp 1s ease;
+            /* 轮播进入动画 */
+        }
+
+        /* 设置.item元素的样式 */
+        .item {
+            position: relative;
+            /* 相对定位 */
+            float: left;
+            /* 左浮动，排列成行 */
+            margin: 0 20px;
+            /* 左右外边距20px */
+        }
+
+        /* 设置.frame元素的样式 */
+        .frame {
+            position: relative;
+            /* 相对定位 */
+            width: 100%;
+            /* 宽度为100% */
+            height: 100%;
+            /* 高度为100% */
+            transition: transform 1s ease-in-out;
+            /* 设置转动的过渡效果 */
+            transform-style: preserve-3d;
+            /* 保持3D效果 */
+        }
+
+        /* 设置.frame的伪元素样式 */
+        .frame:after {
+            content: "";
+            /* 创建空的伪元素 */
+            position: absolute;
+            /* 绝对定位 */
+            bottom: -16%;
+            /* 向下偏移16% */
+            width: 100%;
+            /* 宽度为100% */
+            height: 60px;
+            /* 高度为60px */
+            background: #ffffff1c;
+            /* 半透明白色背景 */
+            box-shadow: 0px 0px 15px 5px #ffffff1c;
+            /* 添加阴影效果 */
+            transform: rotateX(90deg) translate3d(0px, -20px, 0px);
+            /* 3D变换效果 */
+        }
+
+        /* 设置.box元素的样式 */
+        .box {
+            display: flex;
+            /* 使用flex布局 */
+            flex-direction: column;
+            /* 垂直排列元素 */
+            justify-content: center;
+            /* 垂直居中对齐 */
+            align-items: center;
+            /* 水平居中对齐 */
+            position: absolute;
+            /* 绝对定位 */
+            width: 100%;
+            /* 宽度为100% */
+            height: 100%;
+            /* 高度为100% */
+            border: 4px solid #fff;
+            /* 白色边框 */
+            perspective: 1000px;
+            /* 设置透视效果 */
+            transform-style: preserve-3d;
+            /* 保持3D效果 */
+        }
+
+        /* 设置.box内部h1和span的样式 */
+        .box h1,
+        .box h2,
+        .box span {
+            color: #fff;
+            /* 文字颜色为白色 */
+            transform: translateZ(20px);
+            /* Z轴上平移20px */
+        }
+
+        /* 设置.box中h1的样式 */
+        .box h1 {
+            text-shadow: 0 0 30px #1f05b4;
+            /* 添加蓝色阴影 */
+            font-size: 100px;
+            /* 字体大小为100px */
+            font-family: cursive;
+            /* 设置字体为手写体 */
+        }
+
+        .box h2 {
+            font-family: cursive;
+            /* 设置字体为手写体 */
+            text-shadow: 0 0 30px #1f05b4;
+            /* 添加蓝色阴影 */
+        }
+
+        /* 设置.box中的span的样式 */
+        .box span {
+            position: absolute;
+            /* 绝对定位 */
+            bottom: 20px;
+            /* 向下偏移20px */
+            padding: 0 25px;
+            /* 左右内边距25px */
+            text-shadow: 0 0 10px #1f05b4;
+            /* 添加蓝色阴影 */
+        }
+
+        /* 设置.front、.left和.right元素的样式 */
+        .front,
+        .left,
+        .right {
+            box-shadow: 0 0 50px #ffffff;
+            /* 添加白色阴影 */
+            background-size: cover;
+            /* 背景图大小覆盖区域 */
+        }
+
+        /* 设置.left和.right元素的样式 */
+        .right,
+        .left {
+            top: 0;
+            /* 顶部对齐 */
+            width: 60px;
+            /* 宽度为60px */
+            backface-visibility: hidden;
+            /* 背面不可见 */
+        }
+
+        /* 设置.left元素的样式 */
+        .left {
+            left: 0;
+            /* 左侧对齐 */
+            border-left-width: 5px;
+            /* 左边框宽度 */
+            transform: translate3d(1px, 0, -60px) rotateY(-90deg);
+            /* 3D变换效果 */
+            transform-origin: 0%;
+            /* 原点设置为左侧 */
+        }
+
+        /* 设置.right元素的样式 */
+        .right {
+            right: 0;
+            /* 右侧对齐 */
+            border-right-width: 5px;
+            /* 右边框宽度 */
+            transform: translate3d(-1px, 0, -60px) rotateY(90deg);
+            /* 3D变换效果 */
+            transform-origin: 100%;
+            /* 原点设置为右侧 */
+        }
+
+        /* 第一页的样式设置.container元素的样式 */
+        .container {
+            transition: opacity 1s ease;
+            /* 透明度变化的过渡效果 */
+            opacity: 1;
+            /* 初始透明度为1 */
+            position: absolute;
+            /* 绝对定位 */
+            width: 100%;
+            /* 宽度为100% */
+            height: 100%;
+            /* 高度为100% */
+            display: flex;
+            /* 使用flex布局 */
+            justify-content: center;
+            /* 水平方向居中对齐 */
+            align-items: center;
+            /* 垂直方向居中对齐 */
+            background: transparent;
+            /* 背景透明 */
+        }
+
+        .container h1 {
+            text-shadow: 0 0 30px #1f05b4;
+            /* 添加蓝色阴影 */
+            font-family: cursive;
+            /* 设置字体为手写体 */
+            font-size: 50px;
+            /* 字体大小为50px */
+        }
+
+        /* 第一页的样式设置.welcomeScreen元素的样式 */
+        #welcomeScreen {
+            animation: fadeInUp 1s ease;
+            /* 进入动画效果 */
+            background-image: url('./images/06.png');
+            /* 背景图片路径 */
+            background-size: cover;
+            /* 背景图大小覆盖区域 */
+            background-position: center;
+            /* 背景居中 */
+            color: #ffffff;
+            /* 文字颜色 */
+            text-align: center;
+            /* 文字居中对齐 */
+            cursor: pointer;
+            /* 鼠标悬停时为手形光标 */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            /* 文字阴影 */
+        }
+
+        /* 设置第二页的样式 */
+        #mainContent {
+            display: none;
+            /* 初始状态下不显示 */
+            flex-direction: column;
+            /* 列方向布局 */
+            align-items: center;
+            /* 水平居中对齐 */
+            padding: 20px;
+            /* 内边距 */
+            opacity: 0;
+            /* 初始透明度为0 */
+            transition: opacity 1s ease;
+            /* 透明度变化动画 */
+        }
+
+
+        /* 定义淡入动画效果 */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                /* 初始透明度0 */
+                transform: translateY(-20px);
+                /* 向下偏移20px */
+            }
+
+            100% {
+                opacity: 1;
+                /* 最终透明度1 */
+                transform: translateY(0);
+                /* 原位 */
+            }
+
+        }
+
+        /* 切换界面动画 */
+        /* 鼠标移入，盒子变大 */
+        .item:hover {
+            transform: scale(1.25);
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            cursor: pointer;
+            /* 设置鼠标悬停时为手形光标 */
+        }
+        
+
+    </style>
+</head>
+
+<body>
+    <div class="container" id="welcomeScreen" onclick="showMainContent()"> <!-- 欢迎页面 -->
+        <h1>点击进入图书馆</h1> <!-- 显示的欢迎文字 -->
+    </div>
+    <div class="shell" id="mainContent"> <!-- 主内容区域 -->
+        <div class="shell_body"> <!-- 内容主体 -->
+            <nav>
+                <div class="button"> <!-- 按钮容器 -->
+                    <div class="prev"><i class="iconfont icon-arrow_left_fat"></i></div> <!-- 上一页按钮 -->
+                    <div class="next"><i class="iconfont icon-arrow_right_fat"></i></div> <!-- 下一页按钮 -->
+                </div>
+
+                <div class="shell_slider"> <!-- 轮播区域 -->
+                    <!-- 每个.item代表一个轮播项 -->
+                    <div class="item">
+                        <div class="frame"> <!-- 框架 -->
+                            <div class="box front"> <!-- 正面内容 -->
+                                <h1>一</h1> <!-- 年龄 -->
+                                <h2>-象与骑象人-</h2> <!-- 开始的标题 -->
+                                <span>-The beginning-</span> <!-- 说明 -->
+                            </div>
+                            <div class="box left"></div> <!-- 左侧内容 -->
+                            <div class="box right"></div> <!-- 右侧内容 -->
+                        </div>
+                    </div>
+                    <!-- 其他轮播项目 -->
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>二</h1>
+                                <span>-In the year 2015 I reached the age of 14-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>三</h1>
+                                <span>-In the year 2016 I reached the age of 15-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>四</h1>
+                                <span>-In the year 2017 I reached the age of 16-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>五</h1>
+                                <span>-In the year 2018 I reached the age of 17-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>六</h1>
+                                <span>-In the year 2019 I reached the age of 18-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>七</h1>
+                                <span>-In the year 2020 I reached the age of 18-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>八</h1>
+                                <span>-In the year 2021 I reached the age of 19-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>九</h1>
+                                <span>-In the year 2022 I reached the age of 20-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="frame">
+                            <div class="box front">
+                                <h1>十</h1>
+                                <span>-In the year 2023 I reached the age of 21-</span>
+                            </div>
+                            <div class="box left"></div>
+                            <div class="box right"></div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+        </div>
+    </div>
+    </div>
+</body>
+<script>
+    // 获取所有的item元素
+    var items = document.getElementsByClassName('item');
+    // 循环遍历每个item
+    for (var i = 0; i < items.length; i++) {
+        // 获取当前item
+        var item = items[i];
+        var frame = item.getElementsByClassName('frame')[0]; // 获取框架
+        var frontBox = frame.getElementsByClassName('front')[0]; // 获取正面内容
+        var leftBox = frame.getElementsByClassName('left')[0]; // 获取左侧内容
+        var rightBox = frame.getElementsByClassName('right')[0]; // 获取右侧内容
+
+        // 设置背景图片
+        frontBox.style.backgroundImage = 'url(./images/' + (i + 1).toString().padStart(2, '0') + '.png)'; // 正面背景图
+        leftBox.style.backgroundImage = 'url(./images/' + (i + 1).toString().padStart(2, '0') + '.png)'; // 左侧背景图
+        rightBox.style.backgroundImage = 'url(./images/' + (i + 1).toString().padStart(2, '0') + '.png)'; // 右侧背景图
+    }
+
+    // 自执行函数，封装功能
+    (function () {
+        "use strict"; // 严格模式
+        var shell = document.getElementsByClassName('shell')[0]; // 获取shell元素
+        var slider = shell.getElementsByClassName('shell_slider')[0]; // 获取滑动区域
+        var items = shell.getElementsByClassName('item'); // 获取所有item元素
+        var prevBtn = shell.getElementsByClassName('prev')[0]; // 获取上一页按钮
+        var nextBtn = shell.getElementsByClassName('next')[0]; // 获取下一页按钮
+
+        // 定义变量
+        var width, height, totalWidth, margin = 20, // 设置外边距
+            currIndex = 0, // 当前索引
+            interval, intervalTime = 3000; // 定时器
+
+        function init() {
+            // 初始化函数
+            resize(); // 调整大小
+            move(Math.floor(2)); // 移动到中间项
+            bindEvents(); // 绑定事件
+            timer(); // 启动定时器
+        }
+
+        function resize() {
+            // 更新尺寸
+            width = Math.max(window.innerWidth * .20, 275); // 设置每个item的宽度
+            height = window.innerHeight * .5; // 设置每个item的高度
+            totalWidth = width * items.length; // 计算总宽度
+            slider.style.width = totalWidth + "px"; // 设置slider的宽度
+
+            for (var i = 0; i < items.length; i++) {
+                let item = items[i];
+                item.style.width = (width - (margin * 2)) + "px"; // 设置每个item的宽度
+                item.style.height = height + "px"; // 设置每个item的高度
+            }
+
+            move(currIndex); // 重新调用move函数以确保显示正确项
+        }
+
+        function bindEvents() {
+            // 绑定事件函数
+            window.onresize = resize; // 窗口大小变化时调整大小
+            prevBtn.addEventListener('click', () => { prev(); }); // 点击prev按钮
+            nextBtn.addEventListener('click', () => { next(); }); // 点击next按钮
+        }
+        init(); // 初始化
+
+        function move(index) {
+            // 移动shell到指定的item
+            if (index < 1) index = items.length; // 处理循环条件
+            if (index > items.length) index = 1; // 处理循环条件
+            currIndex = index; // 更新当前索引
+
+            // 遍历所有item
+            for (var i = 0; i < items.length; i++) {
+                let item = items[i],
+                    box = item.getElementsByClassName('frame')[0]; // 获取当前frame
+                if (i == (index - 1)) {
+                    item.classList.add('item--active'); // 添加active类
+                    box.style.transform = "perspective(1200px)"; // 设置透视效果
+                } else {
+                    item.classList.remove('item--active'); // 移除active类
+                    box.style.transform = "perspective(1200px) rotateY(" + (i < (index - 1) ? 40 : -40) + "deg)"; // 设置旋转效果
+                }
+            }
+            // 移动slider
+            slider.style.transform = "translate3d(" + ((index * -width) + (width / 2) + window.innerWidth / 2) + "px, 0, 0)";
+            // 更换body背景图片
+            var frontBox = items[index - 1].getElementsByClassName('front')[0];
+            document.body.style.backgroundImage = frontBox.style.backgroundImage; // 更改背景图
+        }
+
+        function timer() {
+            // 定时器自动切换shell
+            clearInterval(interval); // 清除之前的定时器
+            interval = setInterval(() => {
+                move(++currIndex); // 移动到下一个索引
+            }, intervalTime); // 设置时间间隔
+        }
+        // 切换item
+        function prev() {
+            move(--currIndex); // 切换到上一个item
+            timer(); // 重启定时器
+        }
+        function next() {
+            move(++currIndex); // 切换到下一个item
+            timer(); // 重启定时器
+        }
+
+    })();
+
+    function showMainContent() {
+        // 显示主内容的函数
+        const welcomeScreen = document.getElementById('welcomeScreen'); // 获取欢迎页面
+        const mainContent = document.getElementById('mainContent'); // 获取主内容
+
+        welcomeScreen.style.opacity = 0; // 设置欢迎页面透明度为0，淡出效果
+
+        setTimeout(() => {
+            welcomeScreen.style.display = 'none'; // 隐藏欢迎页面
+            mainContent.style.display = 'flex'; // 显示主内容
+            mainContent.style.opacity = 1; // 设置主内容透明度为1
+        }, 1000); // 延迟1秒
+    }
+
+   // 等待DOM加载完成后再执行
+document.addEventListener('DOMContentLoaded', function () {
+    // 选择所有的.item元素
+    const items = document.querySelectorAll('.item');
+
+    // 为每个.item元素添加点击事件
+    if (items.length > 0) {
+        // 第一个.item元素
+        items[0].addEventListener('click', function (e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            location.href = "https://online.fliphtml5.com/flafk/uuxw/";
+        });
+    }
+    
+    if (items.length > 1) {
+        // 第二个.item元素
+        items[1].addEventListener('click', function (e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            location.href = "https://online.fliphtml5.com/flafk/dgkw/";
+        });
+    }
+
+    if (items.length > 2) {
+        // 第二个.item元素
+        items[2].addEventListener('click', function (e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            location.href = "https://online.fliphtml5.com/flafk/pqay/";
+        });
+    }
+
+
+
+    // 如果有更多的.item元素，继续添加点击事件
+    // 例如：
+    // if (items.length > 2) {
+    //     items[2].addEventListener('click', function (e) {
+    //         e.stopPropagation(); // 阻止事件冒泡
+    //         location.href = "https://example.com/another-page/";
+    //     });
+    // }
+
+    // ... 其他.item元素的点击事件
+    });
+
+</script>
+
+</html>
